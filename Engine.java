@@ -24,31 +24,24 @@ public class Engine extends KeyAdapter {
 	private Canvas canvas;
 	//instance of snake in engine constructor
 	private Snake snake;
-	//menu instance
-	//private Menu menu;
-	public Image img; //g.drawImage(img,0,0,null); use this to draw the image in the right place
 	//instance of the gameboard
 	private GameBoard board;
 	//gotta keep score
 	private int score;
+	private static int ups = 10;
 	//game over man!
 	private boolean gameOver;
 	//engine instance
-	//private Button startButton,settingsButton,exitButton;
-	//private Frame f,game;
-	//private Panel mypanel;
+	private Button startButton,settingsButton,exitButton;
+	private Frame f,game;
+	private Panel mypanel;
 
 	public Engine(Canvas canvas) {
-		/*
-		f = new Frame("Menu!");
-		mypanel = new Panel();
-		startButton = new Button("Start Game");
-		settingsButton = new Button("Settings");
-		exitButton = new Button("Exit");
-		Dimension size = new Dimension(50,50);
-		startButton.setSize(size);
-		settingsButton.setSize(size);
-		exitButton.setSize(size);
+		this.f = new Frame("Menu!");
+		this.mypanel = new Panel();
+		this.startButton = new Button("Start Game");
+		this.settingsButton = new Button("Settings");
+		this.exitButton = new Button("Exit");
 		mypanel.add(startButton);
 		mypanel.add(settingsButton);
 		mypanel.add(exitButton);
@@ -63,8 +56,14 @@ public class Engine extends KeyAdapter {
 		startButton.addActionListener(this);
 		settingsButton.addActionListener(this);
 		exitButton.addActionListener(this);
+		this.game = new Frame("Snake!");
+		game.setVisible(false);
+		game.addWindowListener(
+				new WindowAdapter(){
+					public void windowClosing(WindowEvent e){System.exit(0);}
+				}
+		);
 		//eng = new Engine(canvas);
-		*/
 		this.canvas = canvas;
 		this.board = new GameBoard();
 		this.snake = new Snake(board);
@@ -74,8 +73,6 @@ public class Engine extends KeyAdapter {
 		//listens for this
 		canvas.addKeyListener(this);
 	}
-	//number of times to update the game per second
-	//public int ups = 10;
 	//game constructor
 	public void startGame() {
 		canvas.createBufferStrategy(2);
@@ -96,7 +93,7 @@ public class Engine extends KeyAdapter {
 			//clear the screen to draw a fresh frame next time
 			g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 			//set the time that the loop finishes
-			sleepDuration = (1000L/10) - (System.currentTimeMillis() - start);
+			sleepDuration = (1000L/ups) - (System.currentTimeMillis() - start);
 			//if the sleep duration is more than 0 do it
 			if(sleepDuration>0) {
 				try {
@@ -171,64 +168,21 @@ public class Engine extends KeyAdapter {
 			resetGame();
 		}
 	}
-	/*
-	Button getStartButton(){
-		return startButton;
-	}
-	Button getSettingsButton(){
-		return settingsButton;
-	}
-	Button getExitButton(){
-		return exitButton;
-	}
-	public void begin(Frame game) {
-		game.setVisible(true);
-		startGame();
-	}
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand() == "Start Game" ) {
-			begin(game);
+		if (e.getActionCommand() == "Start Game") {
+			f.setVisible(false);
+			game.setVisible(true);
 		}
+		if (e.getActionCommand() == "Exit")
+			System.exit(0);
+		if (e.getActionCommand() == "Settings")
 	}
-	public static ActionListener l;
-	*/
 	//main function
 	public static void main(String[] args) {
-		Frame game = new Frame("SNAKE!");
 		Canvas canvas = new Canvas();
 		Engine eng = new Engine(canvas);
 		canvas.setPreferredSize(new Dimension(GameBoard.boardSize * GameBoard.squareSize, GameBoard.boardSize * GameBoard.squareSize));
-		game.add(canvas);
-		game.pack();
-		game.setVisible(false);
-		game.addWindowListener(
-				new WindowAdapter(){
-					public void windowClosing(WindowEvent e){System.exit(0);}
-				}
-		);
-		Frame f = new Frame("Menu");
-		Panel menu = new Panel();
-		Button startButton = new Button("Start Game");
-		Button quitButton = new Button("Exit");
-		menu.add(startButton);
-		menu.add(quitButton);
-		f.add(menu);
-		f.pack();
-		f.addWindowListener(
-				new WindowAdapter(){
-					public void windowClosing(WindowEvent e){System.exit(0);}
-				}
-		);
-		f.setVisible(true);
-		game.setVisible(true);
-		if (startButton.equals(true)) {
-			game.setVisible(true);
-			f.setVisible(false);
-			eng.startGame();
-		}
-		if (quitButton.equals(true)) {
-			System.exit(0);
-		}
-		eng.startGame();
+		eng.game.pack();
+		eng.game.startGame();
 	}
 }
